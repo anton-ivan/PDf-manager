@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Skyhatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="stylesheets/style.css" rel="stylesheet" type="text/css" >
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+        <!-- HEADER -->
+      <header class="navbar navbar-static-top">
+          <div class="col-md-12 col-lg-12">
+           <div class="col-md-4 col-lg-4">   
+            <a href="#"><img class="logo" src="images/logo.png" alt="logo"></a>
+           </div>
+          </div>
+      </header>
+      <!-- /HEADER -->  
+      <!-- MAIN content -->
+      
+      <!--notification message -->
+      <% if (typeof opt !='undefined'  && opt==1 ) {
+            notification ="<p><strong>Verification email was sent.</strong> please verify your account with your email.</p>";
+      %>
+      <div class="alerts">
+        <div class="alert-message info">
+            <%-notification %>
+        </div>
+      </div>
+      <% } %>
+      
+      <% if (typeof opt !='undefined'  && opt==6 ) {
+        notification ="<p><strong>Your account got verified successfully!</strong> please login with your account.</p>";
+      %>
+      <div class="alerts">
+        <div class="alert-message success">
+            <%-notification %>
+        </div>
+      </div>
+      <% } %>
+      
+      
+      <% if (typeof opt !='undefined'  && (opt==2 || opt==3 || opt ==4  || opt==5) )
+      {
+        if (opt==2)
+            notification="<p><strong>Verification Failed.</strong> Your token is outdated.</p>";
+        else if (opt==3)
+            notification="<p><strong>Login Failed.</strong> Email or password is invalid.</p>";
+        else if (opt==5)
+            notification="<p><strong>Login Failed.</strong> Your account is not verified yet.</p>";
+        else
+            notification="<p><strong>Signup failed.</strong> Email address already exists..</p>";
+       %>
+      <div class="alerts">
+        <div class="alert-message error">
+            <%-notification %>
+        </div>
+      </div>
+      
+      <% } %>
+      
+      <div id="login">
+        <form class="form-horizontal" role="form" action="/users/login" method="post">
+            <legend><label class="col-sm-offset-1"><strong>Login</strong></label></legend>
+          <div class="form-group">
+            <label for="Company email" class="col-sm-3 control-label">Email</label>
+            <div class="col-sm-7">
+              <input type="text" class="form-control" id="email" name="email" placeholder="Company email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="Password" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-7">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <a href="/signup">Don't have account?</a>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <a href="#">Forgot Password?</a>
+            </div>
+          </div>
+          
+
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+              <button type="submit" class="btn btn-default">Login</button>
+            </div>
+          </div>
+        </form>
+      </div>      
+      
+      <footer></footer>
+      </div>
+    
+
+  </body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Skyhatch Workspace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="stylesheets/style.css" rel="stylesheet" type="text/css" >
+    <link href="stylesheets/uploadfile.css" rel="stylesheet">
+    
+    <!-- Global Variables for real time --->
+    <script>
+        
+        <%- "var tgroups="+targetgroups %>
+        <%- "var tids="+tids %>
+        var task_below_date="<%=task_below_date%>";
+        var task_up_date="<%=task_up_date%>";    
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="javascripts/jquery-1.10.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="javascripts/bootstrap.min.js"></script>
+    <script src="javascripts/jquery.uploadfile.min.js"></script>
+    <script src="javascripts/init_fileloader.js"></script>
+    <script src="javascripts/workspace.js"></script>
+    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+        <!-- HEADER -->
+      <header class="navbar navbar-static-top">
+      <div class="col-sm-12">
+       <div class="col-sm-4">   
+        <a href="#"><img class="logo" src="images/logo.png" alt="logo"></a>
+       </div>
+       <div class="col-sm-4">
+        <form action="#" class="form-inline top-buffer" role="form">
+            <div class="input-group">
+                 <input class="form-control" name="search" type="text" placeholder="Search word or phrase...">
+                 <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+            </div>
+        </form>
+        </div>
+        <div class="col-sm-1">        
+            <p class="twenty"><span class="glyphicon glyphicon-info-sign"></span> Help</p>        
+        </div>
+        <div class="col-sm-1">  
+          <div class="three">
+           <p>2</p>
+         </div>
+       </div>
+       <div class="col-sm-2">
+           <div class="one">
+             <p><img src="images/kas.png" alt="kas"><%=usersession.firstname+" "+usersession.lastname %> <span class="caret"></span></p> 
+
+             </div>
+           <div class="user">
+             <ul>
+               <li><a href="#">Workspace</a></li>
+               <li><a href="#">Profile</a></li>
+               <li><a href="/logout">Logout</a></li>
+              </ul>
+             </div>
+          </div>
+        </div>
+      </header>
+      <!-- /HEADER -->
+      
+      <!-- MAIN content -->
+      <div id="main">
+           <!-- Main Sidebar --> 
+            <div  class="col-sm-3">
+                <aside>
+                    <% if (usersession.wadmin==true) { %>
+                    <a data-toggle="modal" href="#workspace_modal" class="btn workspace"><span class="glyphicon glyphicon-plus"></span> New Workspace</a>
+                    <% }%>
+                  
+                    <h4><span class="glyphicon glyphicon-signal"></span>  Recent Activity</h4>
+                    <hr>
+                    <h4><span class="glyphicon glyphicon-cloud"></span>  My Cloud Services</h4>
+                    <hr>
+                    <h4><span class="glyphicon glyphicon-check"></span>  My Tasks 
+                        <button class="btn task"><span class="glyphicon glyphicon-plus"></span>  New</button>
+                    </h4>
+                    
+                    <div id="mytasks">
+                    <% mytasks.forEach(function(task,index)
+                    {
+                        if (task.tasktype==1)
+                        {
+                            tktime=task.created_date;
+                            tktime=(tktime.getMonth()+1)+"/"+tktime.getDate()+"/"+tktime.getFullYear()+" "+tktime.getHours()+":"+tktime.getMinutes();
+                            tkadder=task.taskadder[0].firstname+ " "+task.taskadder[0].lastname;
+                            
+                            for (i=0; i<=task.taskassignee.length-1; i++)
+                            {
+                                if (task.taskassignee[i]._id==usersession._id)
+                                {
+                            
+                    %>
+                    
+                    <div class="task">
+                        <div class="tktitle-1"><%=task.tasktitle%>
+                        </div>                          
+                        <div><span>Assigned by <b><%=tkadder%></b></span></div> 
+                        <div><span class="glyphicon glyphicon-calendar"></span><%=tktime%></div>                        
+                    </div>
+                    <% } break; %>
+                    <% } %>
+                    <% }}) %>
+                    
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    <div class="workspace">
+                        <h4>
+                            <span class="glyphicon glyphicon-briefcase"></span> My Workspace 
+                            <div class="grey"><span class="glyphicon glyphicon-cog"></span></div>
+                            </h4>
+                            <%
+                            workspace_list.forEach(function(witem,index)
+                            {
+                            %>
+                            <div class="workspace-item">
+                            <a href="<%= "workspace?wid=" +witem["_id"]%>"><%= witem["name"] %></a>
+                            <% if (usersession.wadmin==true) { %>
+                            <span class="glyphicon glyphicon-edit workspaceedit  grey" data-toggle="modal" href="#workspaceedit_modal" wname="<%=witem["name"]%>" wid="<%=witem["_id"]%>"></span>
+                            <% } %>
+                            </div>
+                            <% }) %>
+                        <hr>     
+                    </div>
+                </aside>
+            </div> 
+           <!-- / Main Sidebar Left --> 
+
+           <!--  Main Content box --> 
+           <div class="col-sm-9 ">
+            <div id="box">
+            <!--  HEAD of box content -->  
+             <div class="col-sm-12 ">
+                <div class="col-sm-5 "> 
+                    <%
+                    workspaceindex_toshow=0;
+                    for (i=0; i<=workspace_list.length-1; i++)
+                    {
+                        if (workspace_list[i]["_id"]==current_workspace_id)
+                            break;
+                        workspaceindex_toshow++;
+                    }
+                    %>
+                    
+                    
+                    <ul role="navigation" class="nav workspacemenu">
+                       <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><%=workspace_list[ workspaceindex_toshow]["name"]%> <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <%
+                                workspace_list.forEach(function(wspace,index)
+                                {
+                                %>
+                                
+                                <li><a href="workspace?wid=<%=wspace['_id']%>"><%=wspace["name"]%></a></li>
+                                <% }) %>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                    
+                
+                <div class="col-sm-2 ">
+                    <% if (usersession.wadmin==true) { %>                    
+                    <a href="/manage_user" class="btn manageusers">
+                        <span class="glyphicon glyphicon-user"></span> Manage Users
+                    </a>
+                    <% } %>
+                </div>
+                
+                <div class="col-sm-3 ">
+                    <p class="status"><span class="glyphicon glyphicon-lock"></span> Status</p>
+                    <p class="author">created <%  dateobj=new Date(workspace_list[ workspaceindex_toshow]["created_date"]); %> <%=(dateobj.getMonth()+1)+"/"+dateobj.getDate()+"/"+dateobj.getFullYear()+" "+dateobj.getHours()+":"+dateobj.getMinutes() %></b></p>
+                </div>
+                
+                <div class="col-sm-2 ">
+                  <div class="doc">
+                    <h4><span class="glyphicon glyphicon-log-in"></span> Documents</h4>
+                  </div>
+                </div>  
+                
+                <div class="documents">
+                    <div class="col-sm-12 "> 
+                        <div class="col-sm-4 "><h4>Documents</h4></div>               
+                        <div class="col-sm-4 ">    
+                            <% if (usersession.wadmin==true) { %>                    
+                            <a data-toggle="modal" href="#document_upload" class="btn btn-success">
+                            
+                            <span class="glyphicon glyphicon-cloud-upload"></span> Upload
+                            </a>
+                            <% } %>
+                        </div>
+                        <div class="col-sm-1  list"><span class="glyphicon glyphicon-align-justify"></span></div> 
+                        <div class="col-sm-1  kocke"><span class="glyphicon glyphicon-th-large"></span></div> 
+                        <div class="col-sm-1  config"><span class="glyphicon glyphicon-cog"></span></div> 
+                        <div class="col-sm-1 ">&nbsp;</div>   
+                    </div>
+                    
+                    <div class="col-sm-12 " id="wspace_doclist">
+                        <%
+                        doclist.forEach(function(el,index)
+                        {
+                        %>
+                         <a href="<%= "view?id=" +el["_id"]%>"><%= el["docname"] %></a>
+                        <% }) %>
+                    </div>
+                </div>         
+                
+              </div>
+              <!--  HEAD of box content --> 
+              <div class="clearfix"></div>  
+              <!-- FILTERs -->
+              <div class="col-sm-12 ">
+              <div class="filters">
+                <span class="glyphicon glyphicon-filter"></span>
+                <div class="filteri">
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Documents <span class="caret"></span>
+                   <span class="btn-group-addon">&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></span>
+                </button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Type: All <span class="caret"></span>
+                   <span class="btn-group-addon">&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></span>
+                </button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Tags: All <span class="caret"></span>
+                   <span class="btn-group-addon">&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></span>
+                </button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Flag: None <span class="caret"></span>
+                <span class="btn-group-addon">&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></span>
+                 </button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"> People: All <span class="caret"></span> 
+                  <span class="btn-group-addon">&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></span>
+                </button>
+                </div>
+                </div>
+              </div>
+              <!-- / FILTERs -->
+              <div class="clearfix"></div>
+              <hr>
+              <!--Listing results -->
+              <input type="hidden" id="comment_addername" value="<%=usersession.firstname+" "+usersession.lastname%>"/>
+              <input type="hidden" id="comment_adderid" value="<%=usersession._id%>"/>
+              <div class="col-sm-12" id="listingresult">
+                
+
+                <% mytasks.forEach(function(task,index)
+                {
+                tktype=task.tasktype;
+                tktime=new Date(task.created_date);
+                tktime=(tktime.getMonth()+1)+"/"+tktime.getDate()+"/"+tktime.getFullYear()+" "+tktime.getHours()+":"+tktime.getMinutes();
+                tkadder=task.taskadder[0].firstname+ " "+task.taskadder[0].lastname;
+                tkassignee="";
+                tkattention=task.taskattention;
+                task.taskassignee.forEach(function(man,index)
+                {
+                    if (tkassignee!="") tkassignee=tkassignee+",";
+                    tkassignee=tkassignee+man.firstname+" " + man.lastname;
+                })
+                attentionimg='';
+                if (tkattention==1)
+                    attentionimg='<img src="images/important.png">'
+                else if (tkattention==2)
+                    attentionimg='<img src="images/urgent.png">'
+                else
+                    attentionimg=''
+                
+                tktypeclass="glyphicon glyphicon-pushpin";
+                if (tktype==2) tktypeclass="glyphicon glyphicon-question-sign"
+                
+                %>
+                 <div class="col-sm-6" id="<%=task._id%>">
+                   <div class="result">
+                    <h4><span class="<%=tktypeclass%>"></span>
+                      <%=task.tasktitle %></h4>
+                      <%-attentionimg%>
+                    <div class="col-sm-10 taskdocument"><span class="glyphicon glyphicon-file"></span><a href="<%= "view?id="+task.docid[0]._id%>"><%=task.docid[0].docname%></a></div>
+                    <div class="col-sm-12 tasktargettext"><%=task.tasktargettext %></div>
+
+                    <div class="col-sm-6"><p>Assigned to <b><%=tkassignee%></b></p></div>
+                    <div class="col-sm-6"><p class="date"><span class="glyphicon glyphicon-dashboard"></span> <%=tktime%></p></div>
+
+                    <div class="col-sm-6"><p>Added by <b><%=tkadder%></b></p></div>
+                    <div class="col-sm-6"><p class="tag"><span class="glyphicon glyphicon-tag"></span> Some tag</p></div>
+                    
+                    <div class="col-sm-12 commentscount">All comments<%="("+task.comments.length+")"%></div>
+                    <div class="task_comments col-sm-12">
+                    <%task.comments.forEach(function(com,index)
+                    {
+                        comdate=new Date(com.created_date);
+                        comdate=(comdate.getMonth()+1)+"/"+comdate.getDate()+"/"+comdate.getFullYear()+" "+comdate.getHours()+":"+comdate.getMinutes();
+                    %>
+                    <div class="eachcomment">
+                        <div class="ec-adder"><span><%=com.adder_name %></span> <span class="glyphicon glyphicon-time"></span><%=comdate%></div>
+                        <div class="ec-text"><%=com.comment %> </div>
+                    </div>
+                    <% }) %>
+                    </div>
+                    
+                    <div class="col-sm-12 nopadding">
+                        <input type="hidden" class="comment_taskid" value="<%=task._id%>">                        
+                        <input type="text" placeholder="write a comment and press enter" class="form-control commentbox">
+                      </div>
+                    
+                    
+                   </div>
+                   
+                 </div>
+                <% })%>
+                
+
+              </div>
+              <!--Listing results -->
+              <!-- View More Button -->
+              <%if (task_below_date!=null){%>
+              <div class="col-sm-12 viewmore">
+                <button class="btn btn-primary" id="btn_viewmore"><span class="glyphicon glyphicon-repeat"></span><span id="nomore">View More</span></button>
+              </div>
+              <%} %>
+              <!--View More End -->
+              </div>
+             </div>
+           </div>
+           <!-- / Main Content box --> 
+      <footer></footer>
+      
+      
+
+      <!--New workspace Modal -->
+      <div class="modal fade" id="workspace_modal" tabindex="-1" role="dialog" aria-labelledby="Workspace" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Create workspace</h4>
+            </div>
+            
+            <div class="modal-body">
+                <form id="create_workspace_form" class="form-horizontal" role="form" action="/workspace/create" method="post">
+                  <div class="form-group">
+                    <label for="workspace name" class="col-sm-4 control-label">Workspace Name:</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" id="workspacename" name="workspacename" placeholder="Workspace name">
+                    </div>
+                  </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="btn_create_workspace">Create workspace</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      
+      <!--New Doc Modal -->
+      <div class="modal fade" id="document_upload" tabindex="-1" role="dialog" aria-labelledby="DocumentUpload" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Upload Document</h4>
+            </div>
+            
+            <div class="modal-body">
+                <div id="mulitplefileuploader">Upload</div>
+                <div id="docupload_status"></div>
+            </div>
+            <div class="modal-footer">
+              <div class="upload_notification" >Each document should not exceed 4MB. Only pdf format is allowed to upload.</div>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      
+      <!--Edit workspace name Modal -->
+      <div class="modal fade" id="workspaceedit_modal" tabindex="-1" role="dialog" aria-labelledby="EditWorkspace" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Edit Workspace</h4>
+            </div>
+            
+            <div class="modal-body">
+                <form method="post" id="editworkspaceform" action="/workspace/edit">
+                   <div class="form-group workspaceedit-innerbox" >
+                        <div class="col-sm-12">
+                            <input type="hidden" id="exworkspaceid" name="exworkspaceid"/>
+                            <label for="workspace name" class="col-sm-4 control-label">Workspace Name:</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" id="exworkspacename" name="exworkspacename">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="new workspace name" class="col-sm-4 control-label">New Workspace Name:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="newworkspacename" name="newworkspacename">
+                            </div>
+                        </div>
+                   </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button"  id="btn_workspaceedit" class="btn btn-primary" data-dismiss="modal">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+  
+  
+  </body>
+</html>
